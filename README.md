@@ -23,7 +23,7 @@ Before running this project, ensure you have the following installed:
 
 1. **Clone the repository** (or download the project files)
    ```bash
-   cd "GitHub Profile Analyzer API"
+   cd "github-profile-analyzer-api"
    ```
 
 2. **Install dependencies**
