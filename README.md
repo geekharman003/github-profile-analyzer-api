@@ -1,185 +1,187 @@
 # GitHub Profile Analyzer API
 
-A RESTful API built with Express.js and MySQL to analyze and store GitHub user profiles. This application allows you to retrieve, store, and manage information about GitHub users including their repositories, followers, and biographical data.
+A RESTful API built with Express.js and MySQL for storing and retrieving GitHub user profile data. The service accepts profile details, creates the required table if it does not exist, and exposes endpoints to manage saved profiles.
 
 ## Features
 
-- **Store GitHub Profiles**: Save user profile information to a MySQL database
-- **Retrieve All Profiles**: Fetch a list of all analyzed GitHub profiles
-- **Retrieve Single Profile**: Get detailed information about a specific user profile by ID
-- **Data Validation**: Ensures all required user fields are provided before storing
-- **Error Handling**: Comprehensive error responses for API requests
-- **Environment Configuration**: Secure configuration management with environment variables
+- Store GitHub profile information in a MySQL database
+- Retrieve all saved profiles
+- Retrieve a single profile by its database ID
+- Create the users table automatically on first insert
+- Return clear JSON responses for success and error cases
 
 ## Prerequisites
 
-Before running this project, ensure you have the following installed:
+Make sure the following are installed:
 
-- [Node.js](https://nodejs.org/) (v14 or higher)
-- [npm](https://www.npmjs.com/) (comes with Node.js)
-- [MySQL](https://www.mysql.com/) (v5.7 or higher)
+- Node.js (v14 or newer)
+- npm
+- MySQL database
 
 ## Installation
 
-1. **Clone the repository** (or download the project files)
-   ```bash
-   cd "github-profile-analyzer-api"
-   ```
+1. Clone or open the project folder.
+2. Install dependencies:
 
-2. **Install dependencies**
-   ```bash
-   npm install
-   ```
+```bash
+npm install
+```
+
+3. signup at aiven.io and create a mysql service.obtain the ca certificate
+   and add its value as string in DB_SSL_CA environment variable.
 
 ## Environment Setup
 
-1. **Create a `.env` file** in the root directory of the project
-   ```bash
-   touch .env
-   ```
+Create a .env file in the project root and add the following values:
 
-2. **Add the following environment variables** to your `.env` file:
-   ```
-   DB_HOST=localhost
-   DB_USER=your_username
-   DB_PASSWORD=your_password
-   DB_NAME=github_analyzer
-   PORT=3000
-   ```
+```env
+DB_HOST=your_database_host
+DB_USER=your_database_user
+DB_PASSWORD=your_database_password
+DB_NAME=github_analyzer
+DB_PORT=3306
+DB_SSL_CA=your_certificate
+PORT=3000
+```
 
-3. **Configure MySQL**
-   - Create a MySQL database named `github_analyzer`
-   - Create a `users` table with the following structure:
-     ```sql
-     CREATE TABLE users (
-       id INT AUTO_INCREMENT PRIMARY KEY,
-       username VARCHAR(20) UNIQUE NOT NULL,
-       name VARCHAR(30) NOT NULL,
-       public_repos SMALLINT(5) NOT NULL,
-       followers MEDIUMINT(8) NOT NULL,
-       following MEDIUMINT(8) NOT NULL,
-       bio TEXT,
-     );
-     ```
+The application expects a MySQL database to be reachable using those credentials.
 
 ## Running the Application
 
-### Development Mode
-Start the application with automatic reloading using Nodemon:
+### Development mode
+
 ```bash
 npm run dev
 ```
 
-### Production Mode
-Run the application directly:
+### Production mode
+
 ```bash
 npm start
 ```
 
-The API will be available at `http://localhost:3000`
+The API will run at:
+
+```text
+http://localhost:3000
+```
 
 ## API Endpoints
 
-### 1. Store a GitHub Profile
-- **Endpoint**: `POST /analyze`
-- **Description**: Add a new GitHub user profile to the database
-- **Request Body**:
-  ```json
-  {
-    "username": "octocat",
-    "name": "The Octocat",
-    "followers": 3938,
-    "following": 9,
-    "public_repos": 2,
-    "bio": "There once was..."
-  }
-  ```
-- **Success Response** (201):
-  ```json
-  {
-    "message": "User details added successfully"
-  }
-  ```
-- **Error Response** (400):
-  ```json
-  {
-    "message": "All attributes are required"
-  }
-  ```
+### 1. Store a GitHub profile
 
-### 2. Get All Analyzed Profiles
-- **Endpoint**: `GET /analyze`
-- **Description**: Retrieve all stored GitHub user profiles
-- **Success Response** (200):
-  ```json
-  {
-    "users": [
-      {
-        "id": 1,
-        "username": "octocat",
-        "name": "The Octocat",
-        "public_repos": 2,
-        "followers": 3938,
-        "following": 9,
-        "bio": "There once was...",
-      }
-    ]
-  }
-  ```
+- Method: POST
+- Route: /analyze
 
-### 3. Get a Specific Profile
-- **Endpoint**: `GET /analyze/:id`
-- **Description**: Retrieve a specific user profile by their database ID
-- **URL Parameters**:
-  - `id` (integer): The database ID of the user
-- **Success Response** (200):
-  ```json
-  {
-    "user": {
+Request body:
+
+```json
+{
+  "username": "octocat",
+  "name": "The Octocat",
+  "followers": 3938,
+  "following": 9,
+  "public_repos": 2,
+  "bio": "There once was..."
+}
+```
+
+Success response (201):
+
+```json
+{
+  "message": "User details added successfully"
+}
+```
+
+Error response (400):
+
+```json
+{
+  "message": "All attributes are required"
+}
+```
+
+### 2. Get all analyzed profiles
+
+- Method: GET
+- Route: /analyze
+
+Success response (200):
+
+```json
+{
+  "users": [
+    {
       "id": 1,
       "username": "octocat",
       "name": "The Octocat",
       "public_repos": 2,
       "followers": 3938,
       "following": 9,
-      "bio": "There once was...",
+      "bio": "There once was..."
     }
+  ]
+}
+```
+
+### 3. Get one profile by ID
+
+- Method: GET
+- Route: /analyze/:id
+
+Example:
+
+```bash
+GET /analyze/1
+```
+
+Success response (200):
+
+```json
+{
+  "user": {
+    "id": 1,
+    "username": "octocat",
+    "name": "The Octocat",
+    "public_repos": 2,
+    "followers": 3938,
+    "following": 9,
+    "bio": "There once was..."
   }
-  ```
+}
+```
 
 ## Project Structure
 
-```
+```text
 GitHub Profile Analyzer API/
 ├── src/
-│   ├── server.js                 # Express server entry point
+│   ├── server.js
 │   ├── config/
-│   │   ├── db.js                 # Database connection configuration
-│   ├── routes/
-│   │       └── analyze.routes.js # API route definitions
-│   └── controllers/
-│       └── analyze.controllers.js # Business logic and handlers
-├── package.json                   # Project dependencies and scripts
-├── .env                          # Environment variables (create this file)
-└── README.md                     
+│   │   └── db.js
+│   ├── controllers/
+│   │   └── analyze.controllers.js
+│   └── routes/
+│       └── analyze.routes.js
+├── package.json
+├── .env
+└── README.md
 ```
 
 ## Technologies Used
 
-- **Runtime**: [Node.js](https://nodejs.org/)
-- **Framework**: [Express.js](https://expressjs.com/) - Lightweight web framework
-- **Database**: [MySQL](https://www.mysql.com/) - Relational database
-- **ORM/Driver**: [mysql2](https://github.com/sidorares/node-mysql2) - MySQL client
-- **Environment Variables**: [dotenv](https://github.com/motdotla/dotenv)
-- **Development**: [Nodemon](https://nodemon.io/) - Auto-reload during development
+- Node.js
+- Express.js
+- MySQL
+- mysql2
+- dotenv
+- nodemon
 
-## Error Handling
+## Notes
 
-The API returns appropriate HTTP status codes:
-- **200**: Successful GET request
-- **201**: Successful resource creation (POST)
-- **400**: Bad request (missing or invalid data)
-- **500**: Server error
+- The API automatically creates a users table on the first insert if it is missing.
+- The current implementation expects all requested fields to be present in the request body.
 
 ## License
 
