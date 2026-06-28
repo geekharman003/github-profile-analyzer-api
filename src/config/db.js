@@ -6,21 +6,22 @@ const DB_PASSWORD = process.env.DB_PASSWORD;
 const DB_NAME = process.env.DB_NAME;
 const DB_PORT = process.env.DB_PORT;
 const DB_SSL_CA = process.env.DB_SSL_CA;
-if (
-  !DB_HOST ||
-  !DB_USER ||
-  !DB_NAME ||
-  !DB_PASSWORD ||
-  !DB_PORT ||
-  !DB_SSL_CA
-) {
-  throw new Error("missing required database environment variables");
+const NODE_ENV = process.env.NODE_ENV || "development";
+
+if (!DB_HOST || !DB_USER || !DB_NAME || !DB_PASSWORD || !DB_PORT) {
+  throw new Error("Missing required database environment variables");
+}
+
+if (NODE_ENV === "production") {
+  if (!DB_SSL_CA) {
+    throw new Error("Add your ca certificate");
+  }
 }
 
 let pool = null;
 
 async function createConnection() {
-  pool = mysql.createPool({
+  const configObj = {
     host: DB_HOST,
     user: DB_USER,
     password: DB_PASSWORD,
@@ -29,10 +30,15 @@ async function createConnection() {
     waitForConnections: true,
     connectionLimit: 10,
     queueLimit: 0,
-    ssl: {
-      ca: DB_SSL_CA,
-    },
-  });
+  };
+
+  NODE_ENV === "production"
+    ? (configObj.ssl = {
+        ca: DB_SSL_CA,
+      })
+    : "";
+
+  pool = mysql.createPool(configObj);
 
   checkConnection();
 }

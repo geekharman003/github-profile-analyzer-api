@@ -12,7 +12,7 @@ const PORT = process.env.PORT;
 
 app.use("/analyze", analyzeRouter);
 
-app.listen(PORT, async () => {
+app.listen(PORT || 3000, async () => {
   createConnection();
   console.log(`server is running on port:${PORT}`);
 });

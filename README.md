@@ -27,21 +27,18 @@ Make sure the following are installed:
 npm install
 ```
 
-3. signup at aiven.io and create a mysql service.obtain the ca certificate
-   and add its value as string in DB_SSL_CA environment variable.
-
 ## Environment Setup
 
 Create a .env file in the project root and add the following values:
 
 ```env
+PORT=3000
+
 DB_HOST=your_database_host
 DB_USER=your_database_user
 DB_PASSWORD=your_database_password
 DB_NAME=github_analyzer
-DB_PORT=3306
-DB_SSL_CA=your_certificate
-PORT=3000
+DB_PORT=your_port
 ```
 
 The application expects a MySQL database to be reachable using those credentials.
