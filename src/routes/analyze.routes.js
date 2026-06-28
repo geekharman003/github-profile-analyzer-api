@@ -2,12 +2,12 @@ import { Router } from "express";
 import {
   getAnalyzedProfile,
   getAnalyzedProfiles,
-  storeProfileInfo,
+  storeAnalyzedProfileInfo,
 } from "../controllers/analyze.controllers.js";
 
 const router = Router();
 
-router.post("/", storeProfileInfo);
+router.post("/", storeAnalyzedProfileInfo);
 router.get("/", getAnalyzedProfiles);
 router.get("/:id", getAnalyzedProfile);
 

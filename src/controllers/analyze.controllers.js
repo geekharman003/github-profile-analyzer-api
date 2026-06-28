@@ -1,6 +1,6 @@
 import { pool } from "../config/db.js";
 
-async function storeProfileInfo(req, res) {
+async function storeAnalyzedProfileInfo(req, res) {
   let { username, name, followers, following, public_repos, bio } = req.body;
 
   try {
@@ -15,11 +15,23 @@ async function storeProfileInfo(req, res) {
       return res.status(400).json({ message: "All attributes are required" });
     }
 
-    //   db call
-    const sqlQuery = `INSERT INTO users (username, name, public_repos, followers, following, bio)
+    //   db queries
+    const createTableQuery = `CREATE TABLE IF NOT EXISTS users (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    username VARCHAR(20) NOT NULL,
+    name VARCHAR(30) NOT NULL,
+    public_repos SMALLINT UNSIGNED NOT NULL,
+    followers MEDIUMINT UNSIGNED NOT NULL,
+    following MEDIUMINT UNSIGNED NOT NULL,
+    bio TEXT
+    );`;
+
+    await pool.execute(createTableQuery);
+
+    const insertQuery = `INSERT INTO users (username, name, public_repos, followers, following, bio)
       VALUES (?, ?, ?, ?, ?, ?)`;
 
-    const [rows] = await pool.execute(sqlQuery, [
+    const [rows] = await pool.execute(insertQuery, [
       username,
       name,
       public_repos,
@@ -78,4 +90,4 @@ async function getAnalyzedProfile(req, res) {
   }
 }
 
-export { storeProfileInfo, getAnalyzedProfiles, getAnalyzedProfile };
+export { storeAnalyzedProfileInfo, getAnalyzedProfiles, getAnalyzedProfile };
