@@ -18,7 +18,7 @@ async function storeAnalyzedProfileInfo(req, res) {
     //   db queries
     const createTableQuery = `CREATE TABLE IF NOT EXISTS users (
     id INT PRIMARY KEY AUTO_INCREMENT,
-    username VARCHAR(20) NOT NULL,
+    username VARCHAR(20) UNIQUE NOT NULL,
     name VARCHAR(30) NOT NULL,
     public_repos SMALLINT UNSIGNED NOT NULL,
     followers MEDIUMINT UNSIGNED NOT NULL,
